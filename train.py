@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, accuracy_score
 import os
+import joblib
 
 def main():
     # Load CSV from same folder
@@ -32,6 +33,11 @@ def main():
     print("Accuracy:", accuracy_score(y_eval, y_pred))
     print("Classification Report:")
     print(classification_report(y_eval, y_pred))
+
+    # Save the trained model
+    model_path = os.path.join(os.path.dirname(__file__), 'model.pkl')
+    joblib.dump(clf, model_path)
+    print(f"Model saved to {model_path}")
 
 if __name__ == '__main__':
     main()
