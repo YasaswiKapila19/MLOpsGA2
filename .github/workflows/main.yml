@@ -48,7 +48,7 @@ jobs:
 
       # 6. Generate CML report (sanity check)
       - name: Run CML report
-        uses: iterative/cml@v3
+        uses: iterative/cml@v3.0.34
         with:
           report-type: html
           file: reports/results.xml
