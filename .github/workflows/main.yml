@@ -30,7 +30,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install dvc[cml] pytest
+          pip install dvc[cml] pytest dvc-gs
 
       # 4. Pull DVC data & model
       - name: Pull data and model with DVC
