@@ -2,3 +2,4 @@
     remote = gcsremote
 ['remote "gcsremote"']
     url = gs://mlops-course-crypto-shore-473811-r3-unique/iris_classifier/data
+    credentialpath = gcp-key.json
