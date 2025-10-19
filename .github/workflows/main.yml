@@ -37,10 +37,8 @@ jobs:
         run: |
           echo "${{ secrets.GCP_SA_KEY }}" > gcp-key.json
           export GOOGLE_APPLICATION_CREDENTIALS=$PWD/gcp-key.json
-          dvc pull
-        env:
-          DVC_REMOTE: ${{ secrets.DVC_REMOTE }}  # optional, if you use a remote
-
+          dvc pull -v
+          
       # 5. Run pytest
       - name: Run tests and create report
         run: |
