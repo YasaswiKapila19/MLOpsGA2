@@ -42,16 +42,22 @@ jobs:
           DVC_REMOTE: ${{ secrets.DVC_REMOTE }}  # optional, if you use a remote
 
       # 5. Run pytest
-      - name: Run tests
+      - name: Run tests and create report
         run: |
-          pytest -v tests/ --junitxml=reports/results.xml
-
-      # 6. Generate CML report (sanity check)
-      - name: Run CML report
-        uses: iterative/cml@v3.0.34
+          mkdir -p reports
+          echo "## Pytest Sanity Report" > reports/report.md
+          echo "" >> reports/report.md
+          pytest -v tests/ --maxfail=1 --disable-warnings --tb=short >> reports/report.md
+      
+      # 6. Set up CML
+      - name: Set up CML
+        uses: iterative/setup-cml@v2
         with:
-          report-type: html
-          file: reports/results.xml
-          text: "Sanity test report"
+          version: 'latest'
+      
+      # 7. Post report as comment
+      - name: Post CML comment
+        run: |
+          cml comment create --publish reports/report.md
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
