@@ -35,8 +35,8 @@ jobs:
       # 4. Pull DVC data & model
       - name: Pull data and model with DVC
         run: |
-          echo "${{ secrets.GCP_SA_KEY }}" > gcp-key.json
-          export GOOGLE_APPLICATION_CREDENTIALS=$PWD/gcp-key.json
+          echo "${{ secrets.GCP_SA_KEY }}" > gcrypto-shore-473811-r3-d46360224002.json
+          export GOOGLE_APPLICATION_CREDENTIALS=$PWD/gcrypto-shore-473811-r3-d46360224002.json
           dvc pull -v
           
       # 5. Run pytest
