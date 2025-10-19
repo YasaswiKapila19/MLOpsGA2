@@ -36,7 +36,7 @@ jobs:
       - name: Pull data and model with DVC
         run: |
           touch gcrypto-shore-473811-r3-d46360224002.json
-          echo "${{ secrets.GCP_SA_KEY }}" > gcrypto-shore-473811-r3-d46360224002.json
+          printf "%s" "${{ secrets.GCP_SA_KEY }}" > gcrypto-shore-473811-r3-d46360224002.json
           export GOOGLE_APPLICATION_CREDENTIALS=$PWD/gcrypto-shore-473811-r3-d46360224002.json
           dvc remote modify --local gcsremote credentialpath $PWD/gcrypto-shore-473811-r3-d46360224002.json
           dvc pull -v
