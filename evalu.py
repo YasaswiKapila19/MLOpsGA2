@@ -3,9 +3,22 @@
 import joblib
 import pandas as pd
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+import mlflow
+import mlflow.sklearn
+from mlflow.tracking import MlflowClient
 
-def evaluate_model(test_data_path: str, model_path: str) -> dict:
-    model = joblib.load(model_path)
+def evaluate_model(test_data_path: str) -> dict:
+
+    REGISTERED_MODEL_NAME = "Iris_RF"  # <-- use your model name
+    client = MlflowClient()
+    client.set_tracking_uri("http://127.0.0.1:8100")
+    latest_version_info = client.get_latest_versions(REGISTERED_MODEL_NAME, stages=[])  # all stages
+    latest_version = sorted(latest_version_info, key=lambda x: int(x.version))[-1]
+    print(f"Using latest model version: {latest_version.version}")
+    model_uri = f"models:/{REGISTERED_MODEL_NAME}/{latest_version.version}"
+    model = mlflow.sklearn.load_model(model_uri)
+
+    
     data = pd.read_csv(test_data_path)
 
     X_test = data.drop(columns=["target"])
@@ -27,10 +40,9 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Evaluate the Iris model")
     parser.add_argument("test.csv", required=True, help="Path to test CSV")
-    parser.add_argument("model.pkl", required=True, help="Path to trained model")
     args = parser.parse_args()
 
-    results = evaluate_model(args.test_data, args.model)
+    results = evaluate_model(args.test_data)
     print("Evaluation Metrics:")
     for k, v in results.items():
         print(f"{k}: {v:.4f}")
