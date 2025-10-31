@@ -47,8 +47,13 @@ jobs:
           echo "changing dvc remote credential path and pulling"
           dvc remote modify --local gcsremote credentialpath $PWD/gcrypto-shore-473811-r3-d46360224002.json
           dvc pull -v
+
+      #5. Test Mlflow connection
+      - name: Test MLflow connection
+        run: |
+          python -c "import mlflow; print(mlflow.get_tracking_uri())"
           
-      # 5. Run pytest
+      # 6. Run pytest
       - name: Run tests and create report
         run: |
           mkdir -p reports
@@ -56,13 +61,13 @@ jobs:
           echo "" >> reports/report.md
           pytest -v tests/ --maxfail=1 --disable-warnings --tb=short >> reports/report.md
       
-      # 6. Set up CML
+      # 7. Set up CML
       - name: Set up CML
         uses: iterative/setup-cml@v2
         with:
           version: 'latest'
       
-      # 7. Post report as comment
+      # 8. Post report as comment
       - name: Post CML comment
         run: |
           cml comment create --publish reports/report.md
