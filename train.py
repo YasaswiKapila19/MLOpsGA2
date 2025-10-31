@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import classification_report, accuracy_score, precision_score, f1_score
 import os
 import joblib
 
@@ -17,8 +17,8 @@ import joblib
 import os
 
 mlflow.set_tracking_uri("http://127.0.0.1:8100") 
-EXPERIMENT_NAME = "iris_rf_hparam_tuning"
-REGISTERED_MODEL_NAME = "Iris_RF"
+EXPERIMENT_NAME = "iris_rf_tuning_V2"
+REGISTERED_MODEL_NAME = "Iris_RF_V3"
 
 
 def main():
@@ -58,6 +58,10 @@ def main():
             preds = clf.predict(X_eval)
             acc = accuracy_score(y_eval, preds)
             mlflow.log_metric("val_accuracy", acc)
+            prec = precision_score(y_eval,preds, average = "weighted")
+            f1 = f1_score(y_eval,preds, average = "weighted")
+            mlflow.log_metric("precision", prec)
+            mlflow.log_metric("f1_score", f1)
             mlflow.sklearn.log_model(clf, name="model")
             run_id = mlflow.active_run().info.run_id
             if acc > best_val:

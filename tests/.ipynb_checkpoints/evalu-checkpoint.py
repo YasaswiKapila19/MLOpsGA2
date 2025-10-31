@@ -9,7 +9,7 @@ from mlflow.tracking import MlflowClient
 
 def evaluate_model(test_data_path: str) -> dict:
 
-    REGISTERED_MODEL_NAME = "Iris_RF"
+    REGISTERED_MODEL_NAME = "Iris_RF_V3"
     mlflow.set_tracking_uri("http://127.0.0.1:8100/")
     client = MlflowClient()
     
