@@ -64,8 +64,51 @@ jobs:
             kubectl set image deployment/iris-api iris-api=${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:latest
             kubectl rollout status deployment/iris-api
           else
-            echo "🚀 Deployment not found, creating it from deployment.yaml..."
-            kubectl apply -f deployment.yaml
-            kubectl apply -f service.yaml
+            echo "🚀 Deployment not found, creating it from kubernetes/deployment.yaml..."
+            kubectl apply -f kubernetes/deployment.yaml
             kubectl rollout status deployment/iris-api
           fi
+
+      - name: Apply Service
+        run: |
+          echo "🌐 Ensuring Service is applied..."
+          if kubectl get svc iris-api-service > /dev/null 2>&1; then
+            echo "✅ Service already exists, skipping creation."
+          else
+            echo "🚀 Creating service from service.yaml..."
+            kubectl apply -f kubernetes/service.yaml
+          fi
+          kubectl get svc iris-api-service
+
+      - name: Apply Horizontal Pod Autoscaler
+        run: |
+          echo "📈 Applying HPA configuration..."
+          if kubectl get hpa iris-api-hpa > /dev/null 2>&1; then
+            echo "✅ HPA already exists, updating it..."
+            kubectl apply -f kubernetes/hpa.yaml
+          else
+            echo "🚀 Creating new HPA..."
+            kubectl apply -f kubernetes/hpa.yaml
+          fi
+          kubectl get hpa iris-api-hpa
+
+      - name: Stress Test Deployment with wrk
+        run: |
+          echo "⚡ Starting stress test with wrk..."
+          # Install wrk
+          sudo apt-get update && sudo apt-get install -y wrk
+          
+          # Lua script for wrk POST request
+          cat << 'EOF' > post.lua
+          wrk.method = "POST"
+          wrk.headers["Content-Type"] = "application/json"
+          wrk.body = '{"sepal_length":5.1,"sepal_width":3.5,"petal_length":1.4,"petal_width":0.2}'
+          EOF
+
+          # Get external IP of the LoadBalancer service
+          SERVICE_URL=$(kubectl get svc iris-api-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+          echo "Stress testing http://$SERVICE_URL/predict with 1000 connections, 4 threads, for 30s"
+          wrk -t4 -c1000 -d30s -s post.lua http://$SERVICE_URL/predict
+
+
