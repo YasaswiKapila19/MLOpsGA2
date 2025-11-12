@@ -10,7 +10,7 @@ app = FastAPI(title="Iris Application")
 # Load model at startup
 model = joblib.load("model.joblib")
 
-# Initialize Prometheus instrumentator
+# Initialize Prometheus instrumentator1we
 Instrumentator().instrument(app).expose(app)
 
 class IrisInput(BaseModel):
@@ -18,6 +18,7 @@ class IrisInput(BaseModel):
     sepal_width: float
     petal_length: float
     petal_width: float
+    
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
