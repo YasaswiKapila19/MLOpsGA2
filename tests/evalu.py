@@ -10,7 +10,7 @@ from mlflow.tracking import MlflowClient
 def evaluate_model(test_data_path: str) -> dict:
 
     REGISTERED_MODEL_NAME = "Iris_RF_V3"
-    mlflow.set_tracking_uri("http://127.0.0.1:8100/")
+    mlflow.set_tracking_uri("http://34.41.163.255:8100/")
     client = MlflowClient()
     
     latest_version_info = client.get_latest_versions(REGISTERED_MODEL_NAME, stages=[])  # all stages
