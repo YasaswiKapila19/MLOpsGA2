@@ -66,6 +66,29 @@ jobs:
           else
             echo "🚀 Deployment not found, creating it from deployment.yaml..."
             kubectl apply -f deployment.yaml
-            kubectl apply -f service.yaml
             kubectl rollout status deployment/iris-api
           fi
+
+      - name: Apply Service
+        run: |
+          echo "🌐 Ensuring Service is applied..."
+          if kubectl get svc iris-api-service > /dev/null 2>&1; then
+            echo "✅ Service already exists, skipping creation."
+          else
+            echo "🚀 Creating service from service.yaml..."
+            kubectl apply -f service.yaml
+          fi
+          kubectl get svc iris-api-service
+
+      - name: Apply Horizontal Pod Autoscaler
+        run: |
+          echo "📈 Applying HPA configuration..."
+          if kubectl get hpa iris-api-hpa > /dev/null 2>&1; then
+            echo "✅ HPA already exists, updating it..."
+            kubectl apply -f hpa.yaml
+          else
+            echo "🚀 Creating new HPA..."
+            kubectl apply -f hpa.yaml
+          fi
+          kubectl get hpa iris-api-hpa
+
