@@ -64,8 +64,8 @@ jobs:
             kubectl set image deployment/iris-api iris-api=${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:latest
             kubectl rollout status deployment/iris-api
           else
-            echo "🚀 Deployment not found, creating it from deployment.yaml..."
-            kubectl apply -f deployment.yaml
+            echo "🚀 Deployment not found, creating it from kubernetes/deployment.yaml..."
+            kubectl apply -f kubernetes/deployment.yaml
             kubectl rollout status deployment/iris-api
           fi
 
@@ -76,7 +76,7 @@ jobs:
             echo "✅ Service already exists, skipping creation."
           else
             echo "🚀 Creating service from service.yaml..."
-            kubectl apply -f service.yaml
+            kubectl apply -f kubernetes/service.yaml
           fi
           kubectl get svc iris-api-service
 
@@ -85,10 +85,10 @@ jobs:
           echo "📈 Applying HPA configuration..."
           if kubectl get hpa iris-api-hpa > /dev/null 2>&1; then
             echo "✅ HPA already exists, updating it..."
-            kubectl apply -f hpa.yaml
+            kubectl apply -f kubernetes/hpa.yaml
           else
             echo "🚀 Creating new HPA..."
-            kubectl apply -f hpa.yaml
+            kubectl apply -f kubernetes/hpa.yaml
           fi
           kubectl get hpa iris-api-hpa
 
