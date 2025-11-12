@@ -54,9 +54,17 @@ jobs:
           gcloud components install gke-gcloud-auth-plugin --quiet
 
       - name: Get GKE credentials
-        run: gcloud container clusters get-credentials ${{ env.CLUSTER }} --zone ${{ env.GCP_REGION }} --project ${{ env.PROJECT_ID }}
+        run: gcloud container clusters get-credentials ${{ env.CLUSTER }} --zone ${{ env.GKE_ZONE }} --project ${{ env.PROJECT_ID }}
 
       - name: Deploy to GKE
         run: |
-          kubectl set image deployment/iris-api iris-api=${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:latest
-          kubectl rollout status deployment/iris-api
+          # Check if the deployment already exists
+          if kubectl get deployment iris-api > /dev/null 2>&1; then
+            echo "✅ Deployment exists, updating image..."
+            kubectl set image deployment/iris-api iris-api=${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:latest
+            kubectl rollout status deployment/iris-api
+          else
+            echo "🚀 Deployment not found, creating it from deployment.yaml..."
+            kubectl apply -f deployment.yaml
+            kubectl rollout status deployment/iris-api
+          fi
