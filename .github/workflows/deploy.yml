@@ -25,6 +25,8 @@ jobs:
       - name: Decode GCP credentials
         run: |
           echo "${{ secrets.GCP_SA_KEY_2 }}" | base64 --decode > ${HOME}/gcp-key.json
+          echo "✅ Key decoded. SHA256 checksum:"
+          sha256sum ${HOME}/gcp-key.json
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
