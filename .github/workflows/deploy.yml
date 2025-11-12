@@ -66,5 +66,6 @@ jobs:
           else
             echo "🚀 Deployment not found, creating it from deployment.yaml..."
             kubectl apply -f deployment.yaml
+            kubectl apply -f service.yaml
             kubectl rollout status deployment/iris-api
           fi
