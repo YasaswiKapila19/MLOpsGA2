@@ -17,3 +17,10 @@ spec:
         image: us-central1-docker.pkg.dev/crypto-shore-473811-r3/my-repo/iris-api:latest
         ports:
         - containerPort: 8200
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
