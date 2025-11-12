@@ -12,7 +12,7 @@ env:
   REPOSITORY: ${{ secrets.GAR_REPO }}
   IMAGE: iris-api
   CLUSTER: ${{ secrets.GKE_CLUSTER }}
-  GKE_ZONE: ${{ secrets.GCP_ZONE }}
+  GKE_ZONE: ${{ secrets.GCP_REGION }}
 
 jobs:
   build-deploy:
