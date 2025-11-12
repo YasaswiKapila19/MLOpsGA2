@@ -92,3 +92,23 @@ jobs:
           fi
           kubectl get hpa iris-api-hpa
 
+      - name: Stress Test Deployment with wrk
+        run: |
+          echo "⚡ Starting stress test with wrk..."
+          # Install wrk
+          sudo apt-get update && sudo apt-get install -y wrk
+          
+          # Lua script for wrk POST request
+          cat << 'EOF' > post.lua
+          wrk.method = "POST"
+          wrk.headers["Content-Type"] = "application/json"
+          wrk.body = '{"sepal_length":5.1,"sepal_width":3.5,"petal_length":1.4,"petal_width":0.2}'
+          EOF
+
+          # Get external IP of the LoadBalancer service
+          SERVICE_URL=$(kubectl get svc iris-api-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+          echo "Stress testing http://$SERVICE_URL/predict with 1000 connections, 4 threads, for 30s"
+          wrk -t4 -c1000 -d30s -s post.lua http://$SERVICE_URL/predict
+
+
