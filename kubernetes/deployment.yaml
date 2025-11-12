@@ -16,4 +16,4 @@ spec:
       - name: iris-api
         image: us-central1-docker.pkg.dev/crypto-shore-473811-r3/my-repo/iris-api:latest
         ports:
-        - containerPort: 80
+        - containerPort: 8200
